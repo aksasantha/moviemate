@@ -1,0 +1,20 @@
+# Node
+node_modules/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Environment Variables
+.env
+
+# Build folders
+dist/
+build/
+
+# macOS
+.DS_Store
+
+# Database
+*.db
