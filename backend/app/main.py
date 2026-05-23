@@ -7,7 +7,10 @@ from sqlalchemy import text
 
 from app.database.db import Base, engine
 from app.models.user import User
+from app.models.user_movie import UserMovie
 from app.routes.auth import router as auth_router
+from app.routes.movies import router as movie_router
+from app.routes.watchlist import router as watchlist_router
 
 
 load_dotenv()
@@ -30,6 +33,8 @@ app.add_middleware(
 
 
 app.include_router(auth_router)
+app.include_router(movie_router)
+app.include_router(watchlist_router)
 
 
 @app.get("/")
