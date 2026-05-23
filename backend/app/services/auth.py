@@ -1,15 +1,15 @@
+import os
+from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from fastapi import Depends, HTTPException
-
 from fastapi.security import OAuth2PasswordBearer
-
-
-
 from jose import jwt
 from passlib.context import CryptContext
 
+load_dotenv(dotenv_path=".env")
 
-SECRET_KEY = "supersecretkey"
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+print(SECRET_KEY)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 

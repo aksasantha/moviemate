@@ -77,8 +77,9 @@ function Dashboard() {
     try {
       const response = await api.post("/watchlist/add", {
         movie_id: movie.id,
-        title: movie.title,
+        title: movie.title || movie.name,
         poster_path: movie.poster_path,
+        media_type: movie.media_type,
       });
 
       alert(response.data.message);
@@ -124,11 +125,11 @@ function Dashboard() {
 
       {/* HERO SECTION */}
 
-      <section className="relative h-[95vh] w-full flex items-end overflow-hidden">
+      <section className="relative h-[95vh] w-full flex items-end">
         {heroMovie && (
           <img
             src={`https://image.tmdb.org/t/p/original${heroMovie.backdrop_path}`}
-            alt={heroMovie.title}
+            alt={heroMovie.title || heroMovie.name}
             className="absolute inset-0 w-full h-full object-cover transition duration-700"
           />
         )}
@@ -181,7 +182,7 @@ function Dashboard() {
 
                         setSuggestions([]);
 
-                        setQuery(movie.title);
+                        setQuery(movie.title || movie.name);
                       }}
                       className="flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition cursor-pointer"
                     >
@@ -191,17 +192,17 @@ function Dashboard() {
                             ? `https://image.tmdb.org/t/p/w154${movie.poster_path}`
                             : "https://via.placeholder.com/154x231?text=No+Image"
                         }
-                        alt={movie.title}
+                        alt={movie.title || movie.name}
                         className="w-14 h-20 object-cover rounded-xl"
                       />
 
                       <div>
                         <h3 className="font-medium text-white">
-                          {movie.title}
+                          {movie.title || movie.name}
                         </h3>
 
                         <p className="text-sm text-zinc-400 mt-1">
-                          {movie.release_date}
+                          {movie.release_date || movie.first_air_date}
                         </p>
                       </div>
                     </div>
@@ -237,16 +238,18 @@ function Dashboard() {
                         ? `https://image.tmdb.org/t/p/w342${movie.poster_path}`
                         : "https://via.placeholder.com/342x513?text=No+Image"
                     }
-                    alt={movie.title}
+                    alt={movie.title || movie.name}
                     className="w-full h-[420px] object-cover group-hover:scale-105 transition duration-500"
                   />
                 </div>
 
                 <div className="mt-4">
-                  <h3 className="text-lg font-medium">{movie.title}</h3>
+                  <h3 className="text-lg font-medium">
+                    {movie.title || movie.name}
+                  </h3>
 
                   <p className="text-zinc-500 text-sm mt-1">
-                    {movie.release_date}
+                    {movie.release_date || movie.first_air_date}
                   </p>
 
                   <button
@@ -289,16 +292,18 @@ function Dashboard() {
                       ? `https://image.tmdb.org/t/p/w342${movie.poster_path}`
                       : "https://via.placeholder.com/342x513?text=No+Image"
                   }
-                  alt={movie.title}
+                  alt={movie.title || movie.name}
                   className="w-full h-[420px] object-cover group-hover:scale-105 transition duration-500"
                 />
               </div>
 
               <div className="mt-4">
-                <h3 className="text-lg font-medium">{movie.title}</h3>
+                <h3 className="text-lg font-medium">
+                  {movie.title || movie.name}
+                </h3>
 
                 <p className="text-zinc-500 text-sm mt-1">
-                  {movie.release_date}
+                  {movie.release_date || movie.first_air_date}
                 </p>
 
                 <button

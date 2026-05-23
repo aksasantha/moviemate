@@ -2,6 +2,7 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
+    Text,
     ForeignKey
 )
 
@@ -23,16 +24,45 @@ class UserMovie(Base):
         ForeignKey("users.id")
     )
 
-    movie_id = Column(Integer)
+    movie_id = Column(
+        Integer,
+        nullable=False
+    )
 
-    title = Column(String)
+    title = Column(
+        String,
+        nullable=False
+    )
 
     poster_path = Column(String)
 
-    status = Column(String)
+    media_type = Column(String)
 
-    rating = Column(Integer, nullable=True)
+    status = Column(
+        String,
+        default="wishlist"
+    )
 
-    review = Column(String, nullable=True)
+    platform = Column(String)
 
-    progress = Column(Integer, default=0)
+    genre = Column(String)
+
+    rating = Column(
+        Integer,
+        nullable=True
+    )
+
+    review = Column(
+        Text,
+        nullable=True
+    )
+
+    episodes_watched = Column(
+        Integer,
+        default=0
+    )
+
+    total_episodes = Column(
+        Integer,
+        default=0
+    )

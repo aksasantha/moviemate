@@ -1,10 +1,12 @@
 import os
 
 import requests
+
 from dotenv import load_dotenv
 
 
 load_dotenv()
+
 
 TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 
@@ -18,7 +20,8 @@ headers = {
 
 
 def search_movies(query: str):
-    url = f"{BASE_URL}/search/movie"
+
+    url = f"{BASE_URL}/search/multi"
 
     params = {
         "query": query
@@ -30,15 +33,40 @@ def search_movies(query: str):
         params=params
     )
 
-    return response.json()
+    data = response.json()
+
+    filtered_results = [
+
+        item for item in data["results"]
+
+        if item["media_type"] != "person"
+
+    ]
+
+    data["results"] = filtered_results
+
+    return data
 
 
 def get_trending_movies():
-    url = f"{BASE_URL}/trending/movie/day"
+
+    url = f"{BASE_URL}/trending/all/day"
 
     response = requests.get(
         url,
         headers=headers
     )
 
-    return response.json()
+    data = response.json()
+
+    filtered_results = [
+
+        item for item in data["results"]
+
+        if item["media_type"] != "person"
+
+    ]
+
+    data["results"] = filtered_results
+
+    return data
