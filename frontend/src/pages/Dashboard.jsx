@@ -250,11 +250,11 @@ function Dashboard() {
                 </div>
 
                 <div className="mt-4">
-                  <h3 className="text-lg font-medium">
+                  <h3 className="text-lg font-medium line-clamp-1 min-h-[28px]">
                     {movie.title || movie.name}
                   </h3>
 
-                  <p className="text-zinc-500 text-sm mt-1">
+                  <p className="text-zinc-500 text-sm mt-1 min-h-[20px]">
                     {movie.release_date || movie.first_air_date}
                   </p>
 
@@ -304,11 +304,11 @@ function Dashboard() {
               </div>
 
               <div className="mt-4">
-                <h3 className="text-lg font-medium">
+                <h3 className="text-lg font-medium line-clamp-1 min-h-[28px]">
                   {movie.title || movie.name}
                 </h3>
 
-                <p className="text-zinc-500 text-sm mt-1">
+                <p className="text-zinc-500 text-sm mt-1 min-h-[20px]">
                   {movie.release_date || movie.first_air_date}
                 </p>
 
