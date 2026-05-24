@@ -21,6 +21,10 @@ function Watchlist() {
 
   const [sortOption, setSortOption] = useState("recent");
 
+  const [notes, setNotes] = useState("");
+
+  const [generatingReview, setGeneratingReview] = useState(false);
+
   useEffect(() => {
     fetchWatchlist();
   }, []);
@@ -133,6 +137,42 @@ function Watchlist() {
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const generateAIReview = async () => {
+    if (!notes.trim()) return;
+
+    try {
+      setGeneratingReview(true);
+
+      const response = await api.post("/generate-review", {
+        notes: notes,
+      });
+
+      const generatedReview = response.data.review;
+
+      setSelectedMovie((prev) => ({
+        ...prev,
+        review: generatedReview,
+      }));
+
+      setWatchlist((prev) =>
+        prev.map((movie) =>
+          movie.id === selectedMovie.id
+            ? { ...movie, review: generatedReview }
+            : movie,
+        ),
+      );
+
+      await api.put(`/watchlist/${selectedMovie.id}`, {
+        rating: selectedMovie.rating || null,
+        review: generatedReview,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setGeneratingReview(false);
     }
   };
 
@@ -477,6 +517,24 @@ function Watchlist() {
 
                 {selectedMovie.status === "completed" && (
                   <>
+                    <div className="mb-6">
+                      <textarea
+                        placeholder="Write rough notes about the movie..."
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        className="w-full h-28 bg-white/5 border border-white/10 rounded-3xl p-5 outline-none resize-none mb-4"
+                      />
+
+                      <button
+                        onClick={generateAIReview}
+                        disabled={generatingReview}
+                        className="bg-gradient-to-r from-violet-500 to-fuchsia-500 px-6 py-3 rounded-2xl font-medium hover:scale-105 transition disabled:opacity-50"
+                      >
+                        {generatingReview
+                          ? "Generating..."
+                          : "✨ Generate AI Review"}
+                      </button>
+                    </div>
                     {/* STARS */}
 
                     <div className="flex items-center gap-2 mb-8">
