@@ -112,8 +112,6 @@ function Dashboard() {
           <div className="flex items-center gap-8 text-sm text-zinc-300">
             <button className="hover:text-white transition">Discover</button>
 
-            <button className="hover:text-white transition">Trending</button>
-
             <button
               onClick={() => navigate("/watchlist")}
               className="hover:text-white transition"
