@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from typing import Optional
 
 class WatchlistRequest(BaseModel):
 
@@ -10,3 +10,7 @@ class WatchlistRequest(BaseModel):
     poster_path: str
 
     media_type: str
+
+    genre: Optional[str] = None
+
+    platform: Optional[str] = None

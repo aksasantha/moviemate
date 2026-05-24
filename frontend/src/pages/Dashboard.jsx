@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import api from "../api/api";
+import { genreMap } from "../utils/genres";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -74,12 +75,19 @@ function Dashboard() {
   };
 
   const addToWatchlist = async (movie) => {
+    console.log(movie);
     try {
       const response = await api.post("/watchlist/add", {
         movie_id: movie.id,
         title: movie.title || movie.name,
         poster_path: movie.poster_path,
         media_type: movie.media_type,
+        genre:
+          movie.genre_ids && movie.genre_ids.length > 0
+            ? genreMap[movie.genre_ids[0]]
+            : null,
+
+        platform: "Unknown",
       });
 
       alert(response.data.message);

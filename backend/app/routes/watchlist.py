@@ -2,6 +2,7 @@ from fastapi import (
     APIRouter,
     Depends
 )
+from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
 
@@ -35,7 +36,7 @@ def add_to_watchlist(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
-
+    print(movie.dict())
     existing_movie = db.query(UserMovie).filter(
         UserMovie.user_id == current_user["user_id"],
         UserMovie.movie_id == movie.movie_id
@@ -53,6 +54,8 @@ def add_to_watchlist(
         title=movie.title,
         poster_path=movie.poster_path,
         media_type=movie.media_type,
+        genre=movie.genre,
+        platform=movie.platform,
         status="wishlist"
     )
 
@@ -76,3 +79,73 @@ def get_watchlist(
     ).all()
 
     return movies
+
+@router.put("/watchlist/{movie_id}")
+def update_watchlist_item(
+    movie_id: int,
+    updated_data: dict,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+
+    movie = db.query(UserMovie).filter(
+        UserMovie.id == movie_id,
+        UserMovie.user_id == current_user["user_id"]
+    ).first()
+
+    if not movie:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Movie not found"
+        )
+
+    if "status" in updated_data:
+        movie.status = updated_data["status"]
+
+    if "rating" in updated_data:
+        movie.rating = updated_data["rating"]
+
+    if "review" in updated_data:
+        movie.review = updated_data["review"]
+
+    if "episodes_watched" in updated_data:
+        movie.episodes_watched = updated_data["episodes_watched"]
+
+    if "total_episodes" in updated_data:
+        movie.total_episodes = updated_data["total_episodes"]
+
+    db.commit()
+
+    db.refresh(movie)
+
+    return {
+        "message": "Watchlist updated successfully"
+    }
+
+@router.delete("/watchlist/{movie_id}")
+def delete_watchlist_item(
+    movie_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+
+    movie = db.query(UserMovie).filter(
+        UserMovie.id == movie_id,
+        UserMovie.user_id == current_user["user_id"]
+    ).first()
+
+    if not movie:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Movie not found"
+        )
+
+    db.delete(movie)
+
+    db.commit()
+
+    return {
+        "message": "Removed from watchlist"
+    }
