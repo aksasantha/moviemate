@@ -36,7 +36,7 @@ def add_to_watchlist(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
-    print(movie.dict())
+    
     existing_movie = db.query(UserMovie).filter(
         UserMovie.user_id == current_user["user_id"],
         UserMovie.movie_id == movie.movie_id

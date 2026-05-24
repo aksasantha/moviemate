@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 import api from "../api/api";
 
+import { genreMap } from "../utils/genres";
+
 function Watchlist() {
   const navigate = useNavigate();
 
@@ -25,8 +27,11 @@ function Watchlist() {
 
   const [generatingReview, setGeneratingReview] = useState(false);
 
+  const [recommendations, setRecommendations] = useState([]);
+
   useEffect(() => {
     fetchWatchlist();
+    fetchRecommendations();
   }, []);
 
   const fetchWatchlist = async () => {
@@ -38,6 +43,44 @@ function Watchlist() {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchRecommendations = async () => {
+    try {
+      const response = await api.get("/recommendations");
+
+      setRecommendations(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const addRecommendedMovie = async (movie) => {
+    try {
+      const response = await api.post("/watchlist/add", {
+        movie_id: movie.id,
+        title: movie.title || movie.name,
+        poster_path: movie.poster_path,
+        media_type: "movie",
+
+        genre:
+          movie.genre_ids && movie.genre_ids.length > 0
+            ? genreMap[movie.genre_ids[0]]
+            : null,
+
+        platform: "Unknown",
+      });
+
+      alert(response.data.message);
+
+      fetchWatchlist();
+
+      setRecommendations((prev) => prev.filter((item) => item.id !== movie.id));
+    } catch (error) {
+      console.error(error);
+
+      alert("Failed to add movie");
     }
   };
 
@@ -377,6 +420,59 @@ function Watchlist() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        {/* RECOMMENDATIONS */}
+
+        {recommendations.length > 0 && (
+          <div className="mt-24">
+            <div className="mb-10">
+              <p className="uppercase tracking-[0.3em] text-sm text-zinc-500 mb-4">
+                Personalized Picks
+              </p>
+
+              <h2 className="text-4xl font-bold mb-3">Recommended For You</h2>
+
+              <p className="text-zinc-400">
+                Based on your watchlist activity and ratings.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+              {recommendations.map((movie) => (
+                <div key={movie.id} className="group">
+                  <div className="overflow-hidden rounded-3xl bg-zinc-900">
+                    <img
+                      src={
+                        movie.poster_path
+                          ? `https://image.tmdb.org/t/p/w342${movie.poster_path}`
+                          : "https://via.placeholder.com/342x513?text=No+Image"
+                      }
+                      alt={movie.title}
+                      className="w-full h-[380px] object-cover group-hover:scale-105 transition duration-500"
+                    />
+                  </div>
+
+                  <div className="mt-4">
+                    <h3 className="text-lg font-medium line-clamp-1">
+                      {movie.title}
+                    </h3>
+
+                    <p className="text-sm text-zinc-400 mt-2 line-clamp-3">
+                      {movie.overview}
+                    </p>
+
+                    <button
+                      onClick={() => addRecommendedMovie(movie)}
+                      className="mt-5 w-full bg-white text-black py-3 rounded-2xl font-medium hover:bg-zinc-200 transition"
+                    >
+                      {" "}
+                      Add to Watchlist
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
